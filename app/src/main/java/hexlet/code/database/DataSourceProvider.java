@@ -13,12 +13,17 @@ public class DataSourceProvider {
         String jdbcUrl = System.getenv("JDBC_DATABASE_URL");
 
         if (jdbcUrl != null && !jdbcUrl.isBlank()) {
-            config.setJdbcUrl(jdbcUrl);
-            config.setDriverClassName("org.postgresql.Driver");
-
-
+            String host = System.getenv("HOST");
+            String port = System.getenv("DB_PORT");
+            String db = System.getenv("DATABASE");
             String username = System.getenv("USERNAME");
             String password = System.getenv("PASSWORD");
+
+            jdbcUrl = "jdbc:postgresql://" + host + ":" + port + "/" + db
+                    + "?user=" + username + "&password=" + password;
+
+            config.setJdbcUrl(jdbcUrl);
+            config.setDriverClassName("org.postgresql.Driver");
             if (username != null && !username.isBlank()) {
                 config.setUsername(username);
             }
