@@ -30,23 +30,19 @@ dependencies {
 
     testImplementation(platform("org.junit:junit-bom:$junitBomVersion"))
     testImplementation("org.junit.jupiter:junit-jupiter")
-
+    implementation("com.konghq:unirest-java-core:4.4.5")
+    implementation("org.apache.httpcomponents.client5:httpclient5:5.4.2")
     implementation("io.javalin:javalin:$javalinVersion")
     implementation("org.slf4j:slf4j-simple:$slf4jSimpleVersion")
     implementation("gg.jte:jte:$jteVersion")
     implementation("io.javalin:javalin-rendering:$javalinVersion")
     implementation("io.javalin:javalin-bundle:$javalinVersion")
-
     testImplementation("org.assertj:assertj-core:$assertjCoreVersion")
-
     implementation("com.h2database:h2:$h2DatabaseVersion")
     implementation("com.zaxxer:HikariCP:$hikariCPVersion")
-
     implementation("org.postgresql:postgresql:$postgresqlVersion")
-    implementation("com.konghq:unirest-java:$unirestVersion")
-
     testImplementation("com.squareup.okhttp3:mockwebserver:$mockWebServerVersion")
-
+    testImplementation("org.apache.httpcomponents.client5:httpclient5:5.4.2")
     implementation("org.jsoup:jsoup:$jsoupVersion")
 
 }

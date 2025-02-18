@@ -1,0 +1,139 @@
+package hexlet.code;
+
+import hexlet.code.model.Url;
+import hexlet.code.model.UrlCheck;
+import hexlet.code.repository.CheckRepository;
+import hexlet.code.repository.UrlRepository;
+import hexlet.code.util.NamedRoutes;
+import io.javalin.Javalin;
+import io.javalin.testtools.JavalinTest;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import org.apache.hc.core5.http.HttpStatus;
+import org.junit.jupiter.api.*;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+public class AppTest {
+
+    private Javalin app;
+    private MockWebServer mockServer;
+    private String testUrlBase;
+
+    private String getFile() throws IOException {
+        String FIXTURE_FILE = "SamplePage.html";
+        var path = Paths.get("src", "test", "resources", "fixtures", FIXTURE_FILE)
+                .toAbsolutePath().normalize();
+        return Files.readString(path);
+    }
+
+    @BeforeAll
+    public void generalSetUp() throws Exception {
+        mockServer = new MockWebServer();
+        MockResponse mockResponse = new MockResponse()
+                .setBody(getFile())
+                .setResponseCode(200);
+        mockServer.enqueue(mockResponse);
+        mockServer.start();
+    }
+
+    @AfterAll
+    public void afterAll() throws IOException {
+        mockServer.shutdown();
+    }
+
+    @BeforeEach
+    public void setUp() throws SQLException {
+        app = App.getApp();
+    }
+
+
+    @Test
+    void testRootPageLoadsSuccessfully() {
+        JavalinTest.test(app, (server, client) -> {
+            var httpResponse = client.get("/");
+            assertThat(httpResponse.code()).isEqualTo(HttpStatus.SC_OK);
+            assertThat(httpResponse.body().string()).contains("Анализатор страниц");
+        });
+    }
+
+    @Test
+    void testUrlsPageLoadsSuccessfully() {
+        JavalinTest.test(app, (server, client) -> {
+            var httpResponse = client.get("/urls");
+            assertThat(httpResponse.code()).isEqualTo(HttpStatus.SC_OK);
+        });
+    }
+
+    @Test
+    void testUrlCreationSucceeds() {
+        JavalinTest.test(app, (server, client) -> {
+            String requestBody = "url=https://www.example.com";
+            var httpResponse = client.post("/urls", requestBody);
+            assertThat(httpResponse.code()).isEqualTo(HttpStatus.SC_OK);
+            // Проверяем, что ответ содержит созданный URL
+            assertThat(httpResponse.body().string()).contains("https://www.example.com");
+        });
+    }
+
+    @Test
+    void testViewUrlDetailsSuccessfully() throws SQLException {
+        Url createdUrl = new Url("https://www.google.com");
+        createdUrl.setCreatedAt(LocalDateTime.now());
+        UrlRepository.save(createdUrl);
+        JavalinTest.test(app, (server, client) -> {
+            var httpResponse = client.get("/urls/" + createdUrl.getId());
+            assertThat(httpResponse.code()).isEqualTo(HttpStatus.SC_OK);
+        });
+    }
+
+    @Test
+    void testUrlNotFoundReturns404() {
+        JavalinTest.test(app, (server, client) -> {
+            var httpResponse = client.get("/urls/0");
+            assertThat(httpResponse.code()).isEqualTo(HttpStatus.SC_NOT_FOUND);
+        });
+    }
+
+
+    @Test
+    void testInvalidUrlSubmissionRedirection() {
+        JavalinTest.test(app, (server, client) -> {
+            String requestBody = "url=ya";
+            var postResponse = client.post("/urls", requestBody, builder ->
+                    builder.addHeader("Content-Type", "application/x-www-form-urlencoded")
+            );
+
+            assertThat(postResponse.priorResponse().code()).isEqualTo(HttpStatus.SC_MOVED_TEMPORARILY);
+        });
+    }
+
+    @Test
+    void testCheckUrlEndpointProcessesCorrectly() throws SQLException {
+        // Используем адрес из mockServer для проверки
+        testUrlBase = mockServer.url("/").toString();
+        Url urlForCheck = new Url(testUrlBase);
+        urlForCheck.setCreatedAt(LocalDateTime.now());
+        UrlRepository.save(urlForCheck);
+
+        JavalinTest.test(app, (server, client) -> {
+            var httpResponse = client.post(NamedRoutes.urlChecksPath(urlForCheck.getId()));
+            List<UrlCheck> checkList = CheckRepository.findAllCheck(urlForCheck.getId());
+            assertThat(httpResponse.code()).isEqualTo(HttpStatus.SC_OK);
+            // Ожидаем, что в fixture установлены следующие значения:
+            UrlCheck firstCheck = checkList.get(0);
+            assertThat(firstCheck.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
+            // Новые ожидаемые значения (изменённые description)
+            assertThat(firstCheck.getH1()).isEqualTo("Example H1");
+            assertThat(firstCheck.getDescription()).isEqualTo("Example description");
+        });
+    }
+}
