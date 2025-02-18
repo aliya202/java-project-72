@@ -24,7 +24,7 @@ content = @`
                         </div>
                     </div>
                 </form>
-                <p class="mt-2 mb-0 text-muted">Пример: https://www.example.com</p>
+                <p class="mt-2 mb-0 text-muted">Пример: https://www.google.com</p>
             </div>
         </div>
     </div>

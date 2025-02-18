@@ -39,8 +39,6 @@ public class CheckController {
             ctx.sessionAttribute("flash", "Страница успешно добавлена");
             ctx.sessionAttribute("flash-type", "success");
         } catch (Exception e) {
-            ctx.sessionAttribute("flash", "Некорректный URL");
-            ctx.sessionAttribute("flash-type", "danger");
             ctx.header("X-Flash", "Некорректный URL");
             ctx.header("X-Flash-Type", "danger");
             ctx.redirect(NamedRoutes.urlPath(urlId));
