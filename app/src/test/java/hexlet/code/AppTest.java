@@ -55,7 +55,6 @@ public class AppTest {
         app = App.getApp();
     }
 
-
     @Test
     void testRootPageLoadsSuccessfully() {
         JavalinTest.test(app, (server, client) -> {
@@ -102,7 +101,6 @@ public class AppTest {
         });
     }
 
-
     @Test
     void testInvalidUrlSubmissionRedirection() {
         JavalinTest.test(app, (server, client) -> {
@@ -110,7 +108,6 @@ public class AppTest {
             var postResponse = client.post("/urls", requestBody, builder ->
                     builder.addHeader("Content-Type", "application/x-www-form-urlencoded")
             );
-
             assertThat(postResponse.priorResponse().code()).isEqualTo(HttpStatus.SC_MOVED_TEMPORARILY);
         });
     }
@@ -126,10 +123,8 @@ public class AppTest {
             var httpResponse = client.post(NamedRoutes.urlChecksPath(urlForCheck.getId()));
             List<UrlCheck> checkList = CheckRepository.findAllCheck(urlForCheck.getId());
             assertThat(httpResponse.code()).isEqualTo(HttpStatus.SC_OK);
-            // Ожидаем, что в fixture установлены следующие значения:
             UrlCheck firstCheck = checkList.get(0);
             assertThat(firstCheck.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
-            // Новые ожидаемые значения (изменённые description)
             assertThat(firstCheck.getH1()).isEqualTo("Example H1");
             assertThat(firstCheck.getDescription()).isEqualTo("Example description");
         });
