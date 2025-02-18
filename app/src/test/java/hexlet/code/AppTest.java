@@ -79,7 +79,6 @@ public class AppTest {
             String requestBody = "url=https://www.example.com";
             var httpResponse = client.post("/urls", requestBody);
             assertThat(httpResponse.code()).isEqualTo(HttpStatus.SC_OK);
-            // Проверяем, что ответ содержит созданный URL
             assertThat(httpResponse.body().string()).contains("https://www.example.com");
         });
     }
@@ -118,7 +117,6 @@ public class AppTest {
 
     @Test
     void testCheckUrlEndpointProcessesCorrectly() throws SQLException {
-        // Используем адрес из mockServer для проверки
         testUrlBase = mockServer.url("/").toString();
         Url urlForCheck = new Url(testUrlBase);
         urlForCheck.setCreatedAt(LocalDateTime.now());
