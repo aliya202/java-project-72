@@ -20,11 +20,18 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class App {
+
+    private static final Logger logger = LoggerFactory.getLogger(App.class);
 
     public static Javalin getApp() throws SQLException {
         HikariConfig hikariConfig = new HikariConfig();
-        hikariConfig.setJdbcUrl(getDatabaseUrl());
+        String dbUrl = getDatabaseUrl();
+        logger.info("Using JDBC URL: {}", dbUrl);
+        hikariConfig.setJdbcUrl(dbUrl);
         HikariDataSource dataSource = new HikariDataSource(hikariConfig);
 
         var schemaStream = App.class.getClassLoader().getResourceAsStream("schema.sql");
@@ -59,7 +66,9 @@ public class App {
 
     public static void main(String[] args) throws SQLException {
         Javalin app = getApp();
-        app.start(getPort());
+        int port = getPort();
+        logger.info("Starting application on port: {}", port);
+        app.start(port);
     }
 
     public static String getDatabaseUrl() {
@@ -73,7 +82,7 @@ public class App {
     }
 
     private static int getPort() {
-        String port = System.getenv().getOrDefault("DB_PORT", "3000");
+        String port = System.getenv().getOrDefault("PORT", "3000");
         return Integer.parseInt(port);
     }
 }
