@@ -69,10 +69,12 @@ public class UrlRepository extends BaseRepository {
     }
 
     public static List<Url> getEntities() throws SQLException {
-        String sql = "SELECT id, name, " +
-                "(SELECT status_code FROM url_checks WHERE url_checks.url_id = urls.id ORDER BY id DESC LIMIT 1) AS status_code, " +
-                "(SELECT created_at FROM url_checks WHERE url_checks.url_id = urls.id ORDER BY id DESC LIMIT 1) AS last " +
-                "FROM urls";
+        String sql = "SELECT id, name, "
+                + "(SELECT status_code FROM url_checks WHERE url_checks.url_id = urls.id "
+                + "ORDER BY id DESC LIMIT 1) AS status_code, "
+                + "(SELECT created_at FROM url_checks WHERE url_checks.url_id = urls.id "
+                + "ORDER BY id DESC LIMIT 1) AS last "
+                + "FROM urls";
         List<Url> result = new ArrayList<>();
         try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);

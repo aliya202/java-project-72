@@ -29,8 +29,8 @@ public class AppTest {
     private String testUrlBase;
 
     private String getFile() throws IOException {
-        String FIXTURE_FILE = "SamplePage.html";
-        var path = Paths.get("src", "test", "resources", "fixtures", FIXTURE_FILE)
+        String fixtureFile = "SamplePage.html";
+        var path = Paths.get("src", "test", "resources", "fixtures", fixtureFile)
                 .toAbsolutePath().normalize();
         return Files.readString(path);
     }

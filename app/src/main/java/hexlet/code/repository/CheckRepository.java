@@ -2,7 +2,12 @@ package hexlet.code.repository;
 
 import hexlet.code.model.UrlCheck;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +16,8 @@ import java.util.List;
 public class CheckRepository extends BaseRepository {
 
     public static void save(UrlCheck urlCheck) throws SQLException {
-        String sql = "INSERT INTO url_checks (url_id, status_code, h1, title, description, created_at) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO url_checks (url_id, status_code, h1, title, description, created_at) "
+                + "VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setLong(1, urlCheck.getUrlId());
@@ -45,12 +51,12 @@ public class CheckRepository extends BaseRepository {
                     String title = rs.getString("title");
                     String description = rs.getString("description");
                     Timestamp created = rs.getTimestamp("created_at");
-                    UrlCheck urlCheck = new UrlCheck(id, created.toLocalDateTime(), statusCode, title, h1, description, urlId);
+                    UrlCheck urlCheck = new UrlCheck(id, created.toLocalDateTime(), statusCode,
+                            title, h1, description, urlId);
                     result.add(urlCheck);
                 }
             }
         }
         return result;
     }
-
 }
