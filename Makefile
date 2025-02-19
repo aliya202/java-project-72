@@ -1,24 +1,15 @@
-setup:
-	./gradlew wrapper
-
-clean:
-	./gradlew clean
 
 build:
-	./gradlew clean build
+	make -C app build
 
-install:
-	./gradlew clean install
+run-dist:
+	make -C run-dist
 
 test:
-	./gradlew test
-
-report:
-	./gradlew jacocoTestReport
+	make -C app test
 
 lint:
-	./gradlew checkstyleMain checkstyleTest
+	make -C app lint
 
-check-deps:
-	./gradlew dependencyUpdates -Drevision=release
-
+report:
+	make -C app report
