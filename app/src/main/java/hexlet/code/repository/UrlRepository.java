@@ -15,8 +15,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class UrlRepository extends BaseRepository {
+    private static final Logger LOGGER = LoggerFactory.getLogger(UrlRepository.class);
 
     public static void save(Url url) throws SQLException {
         String sql = "INSERT INTO urls (name, created_at) VALUES (?, ?)";
@@ -24,10 +28,12 @@ public class UrlRepository extends BaseRepository {
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, url.getName());
             ps.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
+            LOGGER.info("Executing SQL: {} with parameter: {}", sql, url.getName());
             ps.executeUpdate();
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
                     url.setId(rs.getLong(1));
+                    LOGGER.info("Saved URL with id: {}", url.getId());
                 } else {
                     throw new SQLException("DB did not return an id after saving an entity");
                 }

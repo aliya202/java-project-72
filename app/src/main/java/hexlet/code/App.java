@@ -25,12 +25,12 @@ import org.slf4j.LoggerFactory;
 
 public class App {
 
-    private static final Logger logger = LoggerFactory.getLogger(App.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
 
     public static Javalin getApp() throws SQLException {
         HikariConfig hikariConfig = new HikariConfig();
         String dbUrl = getDatabaseUrl();
-        logger.info("Using JDBC URL: {}", dbUrl);
+        LOGGER.info("Using JDBC URL: {}", dbUrl);
         hikariConfig.setJdbcUrl(dbUrl);
         HikariDataSource dataSource = new HikariDataSource(hikariConfig);
 
@@ -67,7 +67,7 @@ public class App {
     public static void main(String[] args) throws SQLException {
         Javalin app = getApp();
         int port = getPort();
-        logger.info("Starting application on port: {}", port);
+        LOGGER.info("Starting application on port: {}", port);
         app.start(port);
     }
 
@@ -82,7 +82,7 @@ public class App {
     }
 
     private static int getPort() {
-        String port = System.getenv().getOrDefault("PORT", "3000");
+        String port = System.getenv().getOrDefault("PORT", "7070");
         return Integer.parseInt(port);
     }
 }
