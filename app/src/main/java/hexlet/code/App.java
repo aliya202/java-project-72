@@ -30,7 +30,6 @@ public class App {
     public static Javalin getApp() throws SQLException {
         HikariConfig hikariConfig = new HikariConfig();
         String dbUrl = getDatabaseUrl();
-        LOGGER.info("Using JDBC URL: {}", dbUrl);
         hikariConfig.setJdbcUrl(dbUrl);
         HikariDataSource dataSource = new HikariDataSource(hikariConfig);
 
