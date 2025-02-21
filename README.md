@@ -9,7 +9,7 @@
 
 Page Analyzer is a site that analyzes specified pages for SEO suitability.
 
-## [Link](https://java-project-72-t4mb.onrender.com)
+## [Page Analyzer Link](https://java-project-72-t4mb.onrender.com)
 
 
 
