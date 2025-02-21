@@ -26,7 +26,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class AppTest {
+public final class AppTest {
 
     private Javalin app;
     private MockWebServer mockServer;
