@@ -37,31 +37,31 @@ public class UrlController {
         if (inputUrl != null) {
             inputUrl = inputUrl.trim();
         }
+
+        URL parsedUrl;
+        String name;
         try {
-            if (!LinkChecker.isLinkValid(inputUrl)) {
-                throw new IllegalArgumentException("Некорректный URL");
-            }
-
             URI uri = new URI(inputUrl);
-            URL parsedUrl = uri.toURL();
-            String name = parsedUrl.getProtocol() + "://" + parsedUrl.getAuthority();
-
-            Url urlObj = new Url(name);
-            if (UrlRepository.findName(name).isPresent()) {
-                ctx.sessionAttribute("flash", "Страница уже существует");
-                ctx.sessionAttribute("flash-type", "danger");
-                ctx.redirect(NamedRoutes.urlsPath());
-            } else {
-                UrlRepository.save(urlObj);
-                ctx.sessionAttribute("flash", "Страница успешно добавлена");
-                ctx.sessionAttribute("flash-type", "success");
-                ctx.redirect(NamedRoutes.urlsPath());
-            }
-
+            parsedUrl = uri.toURL();
+            name = parsedUrl.getProtocol() + "://" + parsedUrl.getAuthority();
+            LinkChecker.isLinkValid(name);
         } catch (Exception e) {
             ctx.sessionAttribute("flash", "Некорректный URL");
             ctx.sessionAttribute("flash-type", "danger");
             ctx.redirect(NamedRoutes.rootPath());
+            return;
+        }
+
+        Url urlObj = new Url(name);
+        if (UrlRepository.findName(name).isPresent()) {
+            ctx.sessionAttribute("flash", "Страница уже существует");
+            ctx.sessionAttribute("flash-type", "danger");
+            ctx.redirect(NamedRoutes.urlsPath());
+        } else {
+            UrlRepository.save(urlObj);
+            ctx.sessionAttribute("flash", "Страница успешно добавлена");
+            ctx.sessionAttribute("flash-type", "success");
+            ctx.redirect(NamedRoutes.urlsPath());
         }
     }
 
