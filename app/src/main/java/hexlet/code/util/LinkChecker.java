@@ -8,7 +8,7 @@ public class LinkChecker {
     public static boolean isLinkValid(String text) throws Exception {
 
         Pattern pattern = Pattern.compile(
-                "^(https?://(?:(?:[\\w-]+\\.)+[a-zA-Z]{2,}|localhost)(?::\\d{1,5})?(?:/.*)?)$",
+                "^(https?://(?:(?:[\\w-]+\\.)+[a-zA-Z]{2,6}|localhost)(?::\\d{1,5})?(?:/.*)?)$",
                 Pattern.CASE_INSENSITIVE
         );
         Matcher matcher = pattern.matcher(text);
