@@ -1,19 +1,18 @@
 package hexlet.code.controller;
 
-import static io.javalin.rendering.template.TemplateUtil.model;
-
-import hexlet.code.dto.UrlsPage;
-import hexlet.code.dto.UrlPage;
-import hexlet.code.model.UrlCheck;
-import hexlet.code.util.NamedRoutes;
-
 import hexlet.code.dto.MainPage;
+import hexlet.code.dto.UrlPage;
+import hexlet.code.dto.UrlsPage;
 import hexlet.code.model.Url;
+import hexlet.code.model.UrlCheck;
+import hexlet.code.repository.CheckRepository;
 import hexlet.code.repository.UrlRepository;
+import hexlet.code.util.LinkChecker;
+import hexlet.code.util.NamedRoutes;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
-import hexlet.code.repository.CheckRepository;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.net.URL;
@@ -21,9 +20,10 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 
-import hexlet.code.util.LinkChecker;
+import static io.javalin.rendering.template.TemplateUtil.model;
 
 public class UrlController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(UrlController.class);
 
     public static void root(Context ctx) {
         MainPage page = new MainPage();
@@ -37,21 +37,23 @@ public class UrlController {
         if (inputUrl != null) {
             inputUrl = inputUrl.trim();
         }
-
+        LOGGER.info("Received url {}", inputUrl);
         URL parsedUrl;
         String name;
         try {
             URI uri = new URI(inputUrl);
             parsedUrl = uri.toURL();
             name = parsedUrl.getProtocol() + "://" + parsedUrl.getAuthority();
+            LOGGER.info("Processed Name: {}", name);
             LinkChecker.isLinkValid(name);
         } catch (Exception e) {
+            LOGGER.info("Exception in URL processing:  {}", e.getMessage());
             ctx.sessionAttribute("flash", "Некорректный URL");
             ctx.sessionAttribute("flash-type", "danger");
             ctx.redirect(NamedRoutes.rootPath());
             return;
         }
-
+        LOGGER.info("Saving URL:   {}", inputUrl);
         Url urlObj = new Url(name);
         if (UrlRepository.findName(name).isPresent()) {
             ctx.sessionAttribute("flash", "Страница уже существует");
