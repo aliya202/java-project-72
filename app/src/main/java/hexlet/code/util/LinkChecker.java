@@ -19,13 +19,10 @@ public class LinkChecker {
         Matcher matcher = pattern.matcher(text);
 
         if (!matcher.matches()) {
-            return true;
-        }
-        String tld = matcher.group(2);
-        if (tld == null) {
-            return true;
+            return false;
         }
 
-        return !VALID_TLDS.contains(tld.toLowerCase());
+        String tld = matcher.group(2);
+        return tld != null && VALID_TLDS.contains(tld.toLowerCase());
     }
 }
