@@ -8,7 +8,7 @@ public class LinkChecker {
 
     private static final Set<String> VALID_TLDS = Set.of(
             "com", "org", "net", "edu", "gov", "mil", "int", "ru", "us", "uk", "fr", "de", "cn",
-            "br", "in", "jp", "kr", "ca", "au", "it", "es", "nl", "se", "no", "fi", "dk"
+            "br", "in", "jp", "kr", "ca", "au", "it", "es", "nl", "se", "no", "fi", "dk", "io"
     );
 
     public static boolean isLinkValid(String text) throws Exception {
