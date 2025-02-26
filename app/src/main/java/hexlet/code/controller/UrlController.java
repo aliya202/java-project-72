@@ -41,14 +41,16 @@ public class UrlController {
         URL parsedUrl;
         String name;
         try {
-            if (!LinkChecker.isLinkValid(inputUrl)) {
+            if (LinkChecker.isLinkValid(inputUrl)) {
                 throw new IllegalArgumentException("Некорректный URL");
             }
 
             URI uri = new URI(inputUrl);
             parsedUrl = uri.toURL();
             name = parsedUrl.getProtocol() + "://" + parsedUrl.getAuthority();
-            LinkChecker.isLinkValid(name);
+            if (LinkChecker.isLinkValid(name)) {
+                throw new IllegalArgumentException("Некорректный домен");
+            }
         } catch (Exception e) {
             ctx.sessionAttribute("flash", "Некорректный URL");
             ctx.sessionAttribute("flash-type", "danger");
