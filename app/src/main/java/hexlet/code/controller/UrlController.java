@@ -41,6 +41,10 @@ public class UrlController {
         URL parsedUrl;
         String name;
         try {
+            if (!LinkChecker.isLinkValid(inputUrl)) {
+                throw new IllegalArgumentException("Некорректный URL");
+            }
+
             URI uri = new URI(inputUrl);
             parsedUrl = uri.toURL();
             name = parsedUrl.getProtocol() + "://" + parsedUrl.getAuthority();
